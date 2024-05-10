@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dummy Data</title>
+  </head>
+
+  <!-- INICIO DE PÁGINA -->
+
+  <body>
+
+    Número de registros a generar:
+    <input type="number" id="NumRegistros" required/>
+    <select name="opcion" id="usuario">
+      <option value="alumno">Alumnos</option>
+      <option value="academicos">Académicos</option>
+      <option value="administrativos">Administrativos</option>
+    </select>
+    <br>
+    <input type="button" value="Generar código SQL" onclick="generarAlumnos()"/>
+    <input type="button" value="Descargar archivo SQL" onclick="descargarSQL()">
+    <p id="salida"></p>
+
+  </body>
+
+  <!-- FIN DE PÁGINA -->
+
+  <!-- INICIO DE JAVASCRIPT -->
+  <script>
+    const apellidos = [
+      "García", "Rodríguez", "Martínez", "Hernández", "López", "González", "Pérez", "Sánchez", "Ramírez", "Torres",
+      "Flores", "Vázquez", "Rivera", "Gómez", "Díaz", "Reyes", "Morales", "Ortiz", "Castillo", "Chávez",
+      "Ruiz", "Alvarez", "Fernández", "Jiménez", "Moreno", "Ramos", "Díaz", "Álvarez", "Vargas", "Castro",
+      "Rojas", "Chavez", "Silva", "Cortés", "Santiago", "Mendoza", "Delgado", "Espinoza", "Aguilar", "Contreras",
+      "Salazar", "Arias", "Figueroa", "Montes", "Guzmán", "Sosa", "Valdez", "Mejía", "Solís", "Padilla",
+      "Zamora", "Gallardo", "Barrera", "Campos", "Vega", "Luna", "Carrillo", "Montoya", "Lara", "León",
+      "Miranda", "Guerrero", "Cruz", "Navarro", "Herrera", "Villanueva", "Medina", "Pacheco", "Orozco", "Gallo",
+      "Méndez", "Serrano", "Tapia", "Molina", "Aguirre", "Juárez", "Sandoval", "Barrios", "Andrade", "Espinosa",
+      "Villarreal", "Cabrera", "Nava", "Miramontes", "Ochoa", "Aguilera", "Villalobos", "Calderón", "Peralta", "Santos",
+      "Castañeda", "Rosales", "Galarza", "Esparza", "Santana", "Herrero", "Avila", "Ponce", "Segura", "Navarro",
+      "Escobedo", "Trejo", "Fuentes", "Cervantes", "Gallardo", "Herrera", "Jiménez", "Valencia", "Franco", "Padrón",
+      "Salinas", "Del Rio", "Valenzuela", "Mercado", "Huerta", "Soria", "Sotelo", "Duran", "Verdugo", "Guevara",
+      "Manzano", "Olivares", "Hidalgo", "Lamas", "Guerra", "Escamilla", "Ojeda", "Montenegro", "Bravo", "Trujillo",
+      "De León", "Aguayo", "Toledo", "Macías", "Leyva", "Alvarado", "Palacios", "Otero", "Barajas", "Casillas",
+      "Tovar", "Bautista", "Estrada", "Salgado", "Quintero", "Uribe", "Leyva", "Osorio", "Becerra", "Meléndez",
+      "Zavala", "Zúñiga", "Saucedo", "Amador", "Ríos", "Cardona", "Villanueva", "Cárdenas", "Canales", "Villegas",
+      "De la Rosa", "Urbina", "Borrego", "Cadena", "Castañeda", "Dominguez", "Escalante", "Fierro", "Gaytán", "Heredia",
+      "Jurado", "Lara", "Lemus", "Lerma", "Macías", "Maciel", "Magallón", "Noriega", "Núñez", "Olivas",
+      "Ortega", "Paz", "Quezada", "Raya", "Reséndiz", "Reyna", "Rico", "Rocha", "Rodarte", "Roque",
+      "Rosas", "Salas", "Sepúlveda", "Serna", "Suárez", "Tejeda", "Téllez", "Terrazas", "Tovar", "Trejo",
+      "Urbina", "Valadez", "Valle", "Valverde", "Varela", "Velasco", "Vera", "Vidal", "Zaragoza", "Zavala"
+    ];
+
+    const apellidosItalianos = [
+      "Rossi","Russo","Ferrari","Esposito","Bianchi","Romano","Colombo","Ricci","Marino","Greco","Conti","Bruno",
+      "Moretti","De Luca","Mancini","Costa","Giordano","Rizzo","Lombardi","Barbieri","Fontana","Santoro","Mariani",
+      "Rinaldi","Caruso","Ferrara","Galli","Martini","Leone","Longo","Gallo","Gentile","Vitale","Serra","Caputo","Monti",
+      "Grasso","Valentini","Messina","Sorrentino","Salvatore","De Santis","Parisi","D'Angelo","Benedetti","D'Amico",
+      "Coppola","Silvestri","Farina","Lombardo", "Greco", "Santoro", "Mariani", "Rinaldi", "Caruso", "Ferrara", "Galli", "Martini", "Leone",
+      "Longo", "Gallo", "Gentile", "Vitale", "Serra", "Caputo", "Monti", "Grasso", "Valentini",
+      "Messina", "Sorrentino", "Salvatore", "De Santis", "Parisi", "D'Angelo", "Benedetti", "D'Amico", "Coppola", "Silvestri",
+      "Farina", "Ferraro", "Romagnoli", "Bellini", "Marchetti", "Pagano", "Cattaneo", "De Angelis", "Pellegrini", "Guerra",
+      "Marchi", "Fabbri", "Rizzi", "Lombardi", "Giuliani", "Rizzi", "Cattaneo", "Negri", "Mattioli",
+      "Vitali", "Pellegrino", "Martino", "Giordani", "Galli", "De Rosa", "Neri", "Ferri", "Testa",
+      "Marconi", "Morelli", "Palmieri", "Montanari", "Gentili", "Ferretti", "Sala", "D'Angelo", "Ferri",
+      "Rossetti", "Sartori", "Carbone", "Palmieri", "Bernardi", "Basile", "Santucci", "Vitali", "Messina",
+      "D'Agostino", "Sartori", "Palmieri", "Mazzola", "Bernardi", "Basile", "Giordani", "Fiore", "Caruso",
+      "Marino", "Monti", "Colombo", "Conti", "D'Amico", "De Luca", "Rossi", "Santoro", "De Santis",
+      "Rizzo", "Ferrari", "Marini", "Serra", "Russo", "Ricci", "De Angelis", "Bianchi", "Moretti",
+      "Barbieri", "Giordano", "Costa", "Riva", "Colombo", "Mancini", "Bruno", "Marino", "Galli",
+      "Mariani", "Rizzo", "Romano", "Rinaldi", "Longo", "Valentini", "Santoro", "Parisi", "D'Angelo",
+      "Ferrara", "Coppola", "Silvestri", "Farina", "Ferraro", "Martini", "Pagano", "Rizzi", "Negri",
+      "Giordani", "Palmieri", "Vitali", "Rossetti", "Santucci", "Sartori", "Carbone", "Bernardi", "Gentili",
+      "Sala", "Palmieri", "Ferri", "Neri", "Serra", "Pellegrini", "Sala", "Rossi", "Romani",
+      "Neri", "Giordani", "Rossetti", "Gentili", "Ferrari", "Marchetti", "Santucci", "Serra", "Coppola",
+      "Ferri", "Bernardi", "Neri", "Giordani", "Rossetti", "Basile", "Ferrara", "Sala", "Ferretti",
+      "Sartori", "Giuliani", "Santucci", "Romani", "Neri", "Giordani", "Rossetti", "Gentili", "Ferrari",
+      "Marchetti", "Santucci", "Serra", "Coppola", "Ferri", "Bernardi", "Neri", "Giordani", "Rossetti",
+      "Basile", "Ferrara", "Sala", "Ferretti", "Sartori", "Giuliani", "Santucci", "Romani"
+    ];
+
+
+    const primerNombre = [
+      "Emma", "Liam", "Olivia", "Noah", "Ava",
+      "Isabella", "Sophia", "Jackson", "Lucas", "Aiden",
+      "Mia", "Harper", "Evelyn", "Abigail", "Amelia",
+      "Ethan", "Michael", "Alexander", "Benjamin", "James",
+      "William", "Elijah", "Daniel", "Matthew", "Henry",
+      "Charlotte", "Amelia", "Aria", "Scarlett", "Grace",
+      "Chloe", "Avery", "Ella", "Riley", "Lily",
+      "Jack", "Logan", "Lucas", "Carter", "Jayden",
+      "Ella", "Mila", "Madison", "Luna", "Aubrey",
+      "Peyton", "Sofia", "Evelyn", "Aurora", "Isabel",
+      "Liam", "Olivia", "Emma", "Ava", "Sophia",
+      "Jackson", "Elijah", "Mia", "Aiden", "Lucas",
+      "Amelia", "Caden", "Harper", "Evelyn", "Lily",
+      "Mason", "Ella", "Oliver", "Aria", "Grace",
+      "Logan", "Scarlett", "Avery", "Riley", "Chloe",
+      "Daniel", "Sofia", "Mila", "Madison", "Luna",
+      "Isabella", "Aurora", "Zoe", "Penelope", "Abigail",
+      "Benjamin", "Henry", "Mia", "Ella", "Ava",
+      "Noah", "Olivia", "Liam", "Emma", "Sophia",
+      "Jackson", "Lucas", "Aiden", "Evelyn", "Avery",
+      "Grace", "Chloe", "Harper", "Ella", "Mia", "Alejandra", "Javier", "Sofía", "Miguel", "Valentina",
+      "Diego", "Camila", "José", "Ana", "Carlos",
+      "Isabella", "Fernando", "Adriana", "Juan", "Valeria",
+      "Andrés", "Paola", "Mateo", "Gabriela", "Daniel",
+      "Renata", "Pablo", "María", "Emiliano", "Regina",
+      "Guillermo", "Laura", "Ricardo", "Diana", "Héctor",
+      "Ximena", "Eduardo", "Liliana", "Rodrigo", "Victoria",
+      "Fabiola", "Jorge", "Verónica", "Fernanda", "Raúl",
+      "Montserrat", "Hugo", "Elena", "Julián", "Rosa",
+      "Luis", "Cecilia", "Manuel", "Alejandra", "Rafael",
+      "Julia", "Mauricio", "Mariana", "Arturo", "Natalia",
+      "Francisco", "Lucía", "Mario", "Leticia", "Oscar",
+      "Ana Paula", "Ángel", "Elizabeth", "Raul", "Dulce",
+      "Santiago", "Gabriel", "Luisa", "Rubén", "Gloria",
+      "Dante", "Karla", "Axel", "Patricia", "Elena",
+      "Josué", "Irma", "Emilia", "Gustavo", "Sara",
+      "Eva", "Jaime", "Lorena", "Cristina", "Joaquín",
+      "Vanessa", "Salvador", "Estela", "Jasmine", "Alex",
+      "Alma", "Alejandro", "Edith", "León", "Mónica",
+      "Antonio", "Alondra", "Rogelio", "Brenda", "Carmen",
+      "Rubí", "Ismael", "Ana Karen", "Martín", "Rocio",
+      "Nancy", "Jesús", "Alicia", "Ricardo", "Isabel"
+
+    ];
+
+    const segundoNombre = [
+      "Haruto", "Yui", "Riku", "Sakura", "Ren",
+      "Aoi", "Kaito", "Hina", "Haruki", "Sora",
+      "Yuna", "Ryota", "Koharu", "Hikaru", "Nana",
+      "Takumi", "Aya", "Kazuki", "Akari", "Yuto",
+      "Miku", "Yuki", "Taichi", "Kanna", "Riku",
+      "Mana", "Tsubasa", "Airi", "Daiki", "Misaki",
+      "Yuma", "Asuka", "Kenta", "Yui", "Rina",
+      "Hayato", "Ami", "Satoshi", "Mei", "Kenta",
+      "Eri", "Takeru", "Saki", "Ren", "Hinata",
+      "Rina", "Kazuki", "Asumi", "Haruki", "Akane",
+      "Hiroki", "Natsuki", "Yuto", "Haruna", "Takashi",
+      "Natsumi", "Ryota", "Yui", "Kaito", "Hikari",
+      "Takumi", "Aoi", "Haruto", "Riko", "Daichi",
+      "Miyu", "Takashi", "Kaede", "Hiroto", "Kaho",
+      "Shota", "Yuka", "Yuto", "Mio", "Riku",
+      "Rina", "Kenta", "Akari", "Satoshi", "Asumi",
+      "Takumi", "Yui", "Kaito", "Riko", "Hikari",
+      "Haruto", "Aoi", "Yuto", "Rina", "Kenta",
+      "Sakura", "Ren", "Koharu", "Sora", "Yuki",
+      "Aya", "Takashi", "Akari", "Haruki", "Yuna", "Ivan", "Olga", "Sergei", "Natalia", "Dmitri",
+      "Ekaterina", "Nikolai", "Yulia", "Andrei", "Tatiana",
+      "Alexei", "Svetlana", "Pavel", "Irina", "Yuri",
+      "Anastasia", "Mikhail", "Elena", "Vladimir", "Anna",
+      "Viktor", "Maria", "Dmitry", "Ekaterina", "Nikita",
+      "Larisa", "Igor", "Tatiana", "Boris", "Eva",
+      "Konstantin", "Yelena", "Aleksei", "Irina", "Ilya",
+      "Ksenia", "Roman", "Olga", "Aleksandr", "Yelena",
+      "Anton", "Marina", "Sergey", "Natalya", "Andrey",
+      "Sofia", "Nikita", "Elena", "Vladislav", "Irina",
+      "Oleg", "Yulia", "Aleksandra", "Nikolay", "Maria",
+      "Artem", "Anna", "Kirill", "Daria", "Maxim",
+      "Elena", "Mikhail", "Ekaterina", "Denis", "Nina",
+      "Vitaly", "Tatiana", "Vladislav", "Irina", "Vladimir",
+      "Lyudmila", "Grigory", "Natalya", "Bogdan", "Elena",
+      "Ivan", "Svetlana", "Yaroslav", "Olga", "Nikolai",
+      "Ekaterina", "Vasily", "Elena", "Ilya", "Anna",
+      "Maksim", "Marina", "Stanislav", "Yelena", "Alexey",
+      "Tatiana", "Valentin", "Nina", "Ivan", "Irina"
+
+    ];
+
+
+    function generarFechaAleatoria() {
+        var año = Math.floor(Math.random() * (2022 - 2000 + 1)) + 2000;
+        var mes = Math.floor(Math.random() * 12) + 1;
+        var dia = Math.floor(Math.random() * 31) + 1;
+        var hora = Math.floor(Math.random() * 24);
+        var minuto = Math.floor(Math.random() * 60);
+        var segundo = Math.floor(Math.random() * 60);
+
+        // Crea el objeto Date con los valores aleatorios
+        var fechaAleatoria = new Date(año, mes - 1, dia, hora, minuto, segundo);
+
+        // Formatea la fecha en el formato deseado (Año-Mes-Día)
+        var fechaFormateada = fechaAleatoria.toISOString().split("T")[0];
+
+        return fechaFormateada;
+      }
+
+
+
+
+    function generarAlumnos() {
+
+      var numeroVentas = document.getElementById("NumRegistros").value;
+      var select = document.getElementById("usuario");
+      var opcion = select.options[select.selectedIndex].value;
+      var salida = ` CREATE DATABASE IF NOT EXISTS sistema_escolar;<br> USE sistema_escolar;<br> CREATE TABLE IF NOT EXISTS ${opcion} (<br>  expediente INT(11) UNSIGNED NOT NULL UNIQUE,<br>  apellido1 VARCHAR(255) NOT NULL,<br>  apellido2 VARCHAR(255),<br>  nombre VARCHAR(255) NOT NULL,<br>  correo_institucional VARCHAR(255) NOT NULL UNIQUE<br>, contraseña VARCHAR(100), fecha_nacimiento DATE);<br> INSERT INTO ${opcion} (expediente, apellido1, apellido2, nombre, correo_institucional, contraseña, fecha_nacimiento) VALUES <br>`;
+      var matriculaAlumno = 222200017;
+      var matriculaAcademico = 777700020;
+      var matriculaAdmin = 999900020;
+
+      switch (opcion) {
+      case "alumno":
+      for (let i = 0; i < numeroVentas; i++) {
+        salida += ` (${matriculaAlumno}, '${apellidos[Math.floor(Math.random() * 199)]}',
+        '${apellidosItalianos[Math.floor(Math.random() * 199)]}', '${primerNombre[Math.floor(Math.random() * 194)]}
+        ${segundoNombre[Math.floor(Math.random() * 199)]}', '${matriculaAlumno++}@unison.mx', MD5('123'), '`+ generarFechaAleatoria()+`' ),`;
+
+        if (i == numeroVentas-1) {
+          salida = salida.slice(0, -1) + ";"; // Eliminar la coma y agregar punto y coma
+        }
+
+        salida += " <br>";
+      }
+      break;
+
+      case "academicos":
+        for (let i = 0; i < numeroVentas; i++) {
+          salida += ` (${matriculaAcademico}, '${apellidos[Math.floor(Math.random() * 199)]}',
+          '${apellidosItalianos[Math.floor(Math.random() * 199)]}', '${primerNombre[Math.floor(Math.random() * 194)]}
+          ${segundoNombre[Math.floor(Math.random() * 199)]}', '${matriculaAcademico++}@acadunison.mx', MD5('123'), '`+ generarFechaAleatoria()+`' ),`;
+
+          if (i == numeroVentas-1) {
+            salida = salida.slice(0, -1) + ";"; // Eliminar la coma y agregar punto y coma
+          }
+
+          salida += " <br>";
+        }
+      break;
+
+      case "administrativos":
+        for (let i = 0; i < numeroVentas; i++) {
+          salida += ` (${matriculaAdmin}, '${apellidos[Math.floor(Math.random() * 199)]}',
+          '${apellidosItalianos[Math.floor(Math.random() * 199)]}', '${primerNombre[Math.floor(Math.random() * 194)]}
+          ${segundoNombre[Math.floor(Math.random() * 199)]}', '${matriculaAdmin++}@adminunison.mx', MD5('123'), '`+ generarFechaAleatoria()+`' ),`;
+
+          if (i == numeroVentas-1) {
+            salida = salida.slice(0, -1) + ";"; // Eliminar la coma y agregar punto y coma
+          }
+
+          salida += " <br>";
+        }
+      break;
+
+    }
+
+      document.getElementById("salida").innerHTML = salida;
+    }
+
+
+    function descargarSQL() {
+      var contenidoSQL = document.getElementById("salida").innerText;
+      var blob = new Blob([contenidoSQL], { type: "text/plain" });
+      var url = window.URL.createObjectURL(blob);
+      var a = document.createElement("a");
+      a.href = url;
+      a.download = "alumnos.sql";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    }
+
+
+
+
+  </script>
+
+</html>
